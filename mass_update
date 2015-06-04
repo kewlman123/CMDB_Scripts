@@ -1,0 +1,10 @@
+//update field on many CI's
+
+var gr = new GlideRecord("cmdb_ci");   
+gr.addEncodedQuery('sys_class_name=u_cmdb_ci_computer_pda'); 
+gr.query();   
+while (gr.next()) {   
+  gr.fieldname = 'value you want to update';
+  gr.setForceUpdate(true);  // Forces an update even if no fields change   
+  gr.update();   
+} 
