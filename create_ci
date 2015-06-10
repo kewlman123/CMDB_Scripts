@@ -1,0 +1,48 @@
+
+//Sets CI Fields
+current.operational_status == 1;
+current.discovery_source == "Manual Entry";
+current.name == producer.name;
+current.sys_class_name = producer.ci_class;
+current.support_group == producer.support_group;
+current.os == producer.os;
+current.model_id == producer.model_id;
+current.ip_address == producer.ip_address;
+current.short_description == producer.short_description;
+
+//Setting Comments Variable with all the form information
+var incident_comments = "Please verify all information on the CI Record for the newly added CI " + producer.name + "\nThe following information has been provided:\nName: " + producer.name + "\nClass: " + producer.ci_class.getDisplayValue() + "\nSupport Group: " + producer.support_group.getDisplayValue() + "\nOperating System: " + producer.os + "\nModel: " + producer.model_id.getDisplayValue() + "\nIP Address: " + producer.ip_address + "\nShort Description: " + producer.short_description;
+
+//GlideRecord to create the follow up incident after creating the new CI Record
+var inc = new GlideRecord('incident');
+  inc.initialize();
+  inc.short_description = producer.name + " - New CI Add";
+  inc.u_record_producer = "New CI Add";
+  inc.caller_id = gs.getUserID();
+  inc.opened_by = gs.getUserID();
+  inc.priority = 4;
+  inc.u_ticket_type = "Request";
+  inc.category = "General Services";
+  inc.subcategory = "CMDB";
+  inc.assignment_group = "74c336e4886ca400944b662527a00c37";
+  inc.u_notified_via = "Self Service";
+  inc.comments = incident_comments;
+  var userObject = gs.getUser();
+  inc.location = userObject.getLocation();
+  inc.insert();
+  
+//This GlideRecord will pull the sys_id and number of the recently created incident so that we can populate the FormInfoHeader
+var new_inc = new GlideRecord('incident');
+  new_inc.addQuery('u_record_producer', "New CI Add");
+  new_inc.orderByDesc('opened_at');
+  new_inc.query();
+  if (new_inc.next()){
+    var new_inc_num = new_inc.number;
+	var new_inc_sys_id = new_inc.sys_id;
+  }
+
+gs.include("FormInfoHeader");
+var fi = new FormInfoHeader();
+var s = producer.name + ' has been added to the CMDB<br/>';
+s += '<a href= "incident.do?sys_id=' + new_inc_sys_id + '">' + new_inc_num + '</a> has been opened to the CMDB group for follow up.<br/>';
+fi.addMessage(s);
