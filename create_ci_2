@@ -1,0 +1,27 @@
+//from the ui_action (server build)--creates ci then marks the task inactive and current.update()
+
+current.state = 3;
+
+var create_ci = new GlideRecord('cmdb_ci_server');
+//cmdb_ci
+  create_ci.name = current.u_hostname;
+  create_ci.ip_address = current.u_ip_address;
+  create_ci.sys_class_name = current.u_class;
+  create_ci.discovery_source = "Manual Entry";
+  create_ci.operational_status = 5;
+  
+//cmdb_ci_server
+  create_ci.u_server_network = current.u_server_network;
+  create_ci.u_sep = current.u_sep;
+
+//cmdb_ci_computer
+  create_ci.cpu_count = current.u_processors;
+  create_ci.os = current.u_os;
+  create_ci.ram = current.u_memory;
+  
+  create_ci.insert();
+
+
+current.active = false;
+current.update();
+
