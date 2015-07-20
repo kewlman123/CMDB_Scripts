@@ -1,0 +1,11 @@
+//avoid duplicate CI
+//conditions to allow server tables: current.sys_class_name != 'cmdb_ci_server' && current.sys_class_name != 'cmdb_ci_win_server' && current.sys_class_name != 'cmdb_ci_linux_server' && current.sys_class_name != 'cmdb_ci_esx_server'
+
+function dup_ci(){
+var gr = new GlideRecord('cmdb_ci');
+if(gr.get(current.name)){       
+current.setAbortAction(true);
+gs.addErrorMessage('***CAUTION***  CI Already Exists');
+}
+}
+dup_ci();
