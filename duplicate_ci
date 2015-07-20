@@ -1,0 +1,17 @@
+//change table or if background script remove function section
+
+gatherDupes();
+
+function gatherDupes() {
+var gr = new GlideAggregate('cmdb_ci_computer');
+gr.addAggregate('COUNT', 'name');
+gr.groupBy('name');
+gr.addHaving('COUNT', '>', 1);
+gr.query();
+
+var dupNames = [];
+gs.log("The following " + gr.getRowCount() + " CIs has duplicates based on name field...");
+while (gr.next()) {
+gs.log("Duplicates: " + gr.getAggregate('COUNT', 'name') + " => " + gr.name);
+}
+}
