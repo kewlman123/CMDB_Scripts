@@ -34,3 +34,25 @@ gs.log("The following " + gr.getRowCount() + " CIs has duplicates based on name 
 while (gr.next()) {
 gs.log("Duplicates: " + gr.getAggregate('COUNT', 'name') + " => " + gr.name);
 }
+
+
+_____________________________________________________________________________________________________________________
+
+//havent tried this one, came from this post: https://community.servicenow.com/thread/190963
+
+var gr = new GlideAggregate('cmdb_ci_server');
+gr.addAggregate('COUNT', 'name');
+ 
+ 
+gr.groupBy('name');
+gr.addHaving('COUNT', '>', 1);
+gr.query();
+ 
+ 
+var dupNames = [];
+gs.log("The following " + gr.getRowCount() + " CIs has duplicates based on name field...");
+while (gr.next()) {
+gs.log("Duplicates: " + gr.getAggregate('COUNT', 'name') + " => " + gr.name);
+}
+
+
